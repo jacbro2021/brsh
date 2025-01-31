@@ -6,7 +6,7 @@ CXXFLAGS := -Wall -Wextra -std=c++17 -g
 TARGET := brsh
 
 # Source files (add more as needed)
-SRCS := brsh.cpp
+SRCS := brsh.cpp parse.cpp
 
 # Object files (derived from source files)
 OBJS := $(SRCS:.cpp=.o)

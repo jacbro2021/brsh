@@ -1,12 +1,21 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
-using namespace std;
+#include "config.hpp"
+#include "parse.hpp"
 
 int main() {
-    string s;
-    getline(cin, s);
-    cout << s << endl;
+    parser::Parser p;
+
+    while (true) {
+        std::cout << config::prompt;
+        std::vector<std::string> tokens = p.parse_next_line();
+
+        for (auto tok : tokens) {
+            std::cout << tok << std::endl;
+        }
+    }
 
     return 0;
 }
