@@ -4,17 +4,16 @@
 
 #include "config.hpp"
 #include "parse.hpp"
+#include "execute.hpp"
 
 int main() {
-    parser::Parser p;
+    brsh_lib::Executor executor;
 
     while (true) {
+        brsh_lib::Parser parser;
         std::cout << config::prompt;
-        std::vector<std::string> tokens = p.parse_next_line();
-
-        for (auto tok : tokens) {
-            std::cout << tok << std::endl;
-        }
+        parser.parse_next_line(); 
+        executor.execute_command(parser.get_commands()[0], 0, 1);
     }
 
     return 0;

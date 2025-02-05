@@ -1,2 +1,3 @@
-*.o
 brsh
+.vscode
+*.o

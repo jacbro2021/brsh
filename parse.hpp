@@ -4,16 +4,28 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
+#include <algorithm>
 
-namespace parser {
+namespace brsh_lib {
     class Parser {
         private:
-            std::string line;
+            std::string infile;
+            std::string outfile;
+            std::vector<std::vector<std::string>> commands;
+
             std::string read_one_line();
-            std::vector<std::string> tokenize_line(); 
+            std::string trim(const std::string& str);
+            void tokenize_line(std::string line); 
 
         public:
-           std::vector<std::string> parse_next_line(); 
+            std::string get_infile();
+            std::string get_outfile();
+            std::vector<std::vector<std::string>> get_commands();
+
+            void parse_next_line(); 
+
+            void debug(); // debug purposes only.
     };
 }
 
