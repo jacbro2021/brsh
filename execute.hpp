@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <cerrno>
 #include <limits.h>
+#include <stdexcept>
+#include <sstream>
 
 #include "config.hpp"
 
@@ -21,16 +23,19 @@ namespace brsh_lib {
     class Executor {
         private:
             std::vector<std::string> paths;
-            const std::string builtins[3] = {"cd", "exit", "brsh"};
+            static constexpr std::array<std::string_view, 3> builtins = {"cd", "exit", "brsh"};
 
+            int execute_builtin(std::vector<std::string> args);
             int is_builtin(std::string command);
             std::string get_current_working_directory();
-            int execute_builtin(std::vector<std::string> args);
             int execute_builtin_cd(std::vector<std::string> args);
-            int execute_builtin_exit(std::vector<std::string> args);
-            int execute_builtin_brsh(std::vector<std::string> args);
+            int execute_builtin_exit();
+            int execute_builtin_brsh();
+
+            int execute_external(std::vector<std::string> args);
 
         public:
+            Executor();
             int execute_command(std::vector<std::string> command, int in, int out);
     };
 }

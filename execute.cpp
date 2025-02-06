@@ -1,18 +1,28 @@
 #include "execute.hpp"
 
 namespace brsh_lib {
-    int Executor::execute_command(std::vector<std::string> command, int in, int out) {
-        return execute_builtin(command);
-    }
+    Executor::Executor() {
+        const char* env_var = "PATH";
 
-    int Executor::is_builtin(std::string command) {
-        for (int i = 0; i < 3; i++) {
-            if (command == builtins[i]) {
-                return i;
-            }
+        if (std::getenv(env_var) == nullptr) {
+            std::ostringstream oss;
+            oss << "$" << env_var << " environment variable not found." << std::endl;
+            std::string result = oss.str();
+            throw std::runtime_error(result);
         }
 
-        return ExecutorErrorType::BUILTIN_NOT_FOUND;
+        std::stringstream ss(std::getenv(env_var));
+        std::string path;
+
+        while (std::getline(ss, path, ':')) {
+            paths.push_back(path);
+        }
+    }
+
+    int Executor::execute_command(std::vector<std::string> command, int in, int out) {
+        (void) in;
+        (void) out;
+        return execute_builtin(command);
     }
 
     int Executor::execute_builtin(std::vector<std::string> args) {
@@ -27,11 +37,21 @@ namespace brsh_lib {
             case 0:
                 return execute_builtin_cd(args);
             case 1:
-                return execute_builtin_exit(args);
+                return execute_builtin_exit();
             case 2:
-                return execute_builtin_brsh(args);
+                return execute_builtin_brsh();
             default:
                 break;
+        }
+
+        return ExecutorErrorType::BUILTIN_NOT_FOUND;
+    }
+
+    int Executor::is_builtin(std::string command) {
+        for (int i = 0; i < 3; i++) {
+            if (command == builtins[i]) {
+                return i;
+            }
         }
 
         return ExecutorErrorType::BUILTIN_NOT_FOUND;
@@ -52,13 +72,15 @@ namespace brsh_lib {
         } else {
             return ExecutorErrorType::CD_EXTRA_ARGUMENTS;
         }
+
+        return 0;
     }
 
-    int Executor::execute_builtin_exit(std::vector<std::string> args) {
+    int Executor::execute_builtin_exit() {
         exit(0);
     }
 
-    int Executor::execute_builtin_brsh(std::vector<std::string> args) {
+    int Executor::execute_builtin_brsh() {
        std::cout << R"(
  __                       __      
 [  |                     [  |     
@@ -74,12 +96,12 @@ namespace brsh_lib {
     }
 
     std::string Executor::get_current_working_directory() {
-    char buffer[PATH_MAX]; // Maximum path length
-    if (getcwd(buffer, sizeof(buffer)) != nullptr) {
-        return std::string(buffer);
-    } else {
-        perror("getcwd failed"); // Print error message
-        return "";
+        char buffer[PATH_MAX]; // Maximum path length
+        if (getcwd(buffer, sizeof(buffer)) != nullptr) {
+            return std::string(buffer);
+        } else {
+            perror("getcwd failed"); // Print error message
+            return "";
+        }
     }
-}
 }
