@@ -1,31 +1,22 @@
 #include "execute.hpp"
 
 namespace brsh_lib {
-    Executor::Executor() {
-        const char* env_var = "PATH";
-
-        if (std::getenv(env_var) == nullptr) {
-            std::ostringstream oss;
-            oss << "$" << env_var << " environment variable not found." << std::endl;
-            std::string result = oss.str();
-            throw std::runtime_error(result);
-        }
-
-        std::stringstream ss(std::getenv(env_var));
-        std::string path;
-
-        while (std::getline(ss, path, ':')) {
-            paths.push_back(path);
-        }
-    }
-
-    int Executor::execute_command(std::vector<std::string> command, int in, int out) {
+    int Executor::execute_command(std::vector<std::string>& command, int in, int out) {
         (void) in;
         (void) out;
+        // std::cout << get_bin_path(command[0]) << std::endl;
+        if (command.empty()) {
+            return 0;
+        }
+
+        if (is_builtin(command[0]) == ExecutorErrorType::BUILTIN_NOT_FOUND) {
+            return execute_external(command);
+        }
+
         return execute_builtin(command);
     }
 
-    int Executor::execute_builtin(std::vector<std::string> args) {
+    int Executor::execute_builtin(std::vector<std::string>& args) {
         if (args.size() == 0) {
             return ExecutorErrorType::INVALID_COMMAND;
         }
@@ -47,7 +38,7 @@ namespace brsh_lib {
         return ExecutorErrorType::BUILTIN_NOT_FOUND;
     }
 
-    int Executor::is_builtin(std::string command) {
+    int Executor::is_builtin(std::string& command) {
         for (int i = 0; i < 3; i++) {
             if (command == builtins[i]) {
                 return i;
@@ -58,7 +49,7 @@ namespace brsh_lib {
     }
 
     // TODO: Fix this.
-    int Executor::execute_builtin_cd(std::vector<std::string> args) {
+    int Executor::execute_builtin_cd(std::vector<std::string>& args) {
         int res;
 
         if (args.size() == 1) {
@@ -103,5 +94,33 @@ namespace brsh_lib {
             perror("getcwd failed"); // Print error message
             return "";
         }
+    }
+
+    int Executor::execute_external(std::vector<std::string>& cmd) {
+        if (cmd.empty()) { 
+            return 0;
+        }
+
+        pid_t pid = fork();
+        if (pid == -1) {
+            // Should add better error handling here.
+            return -1;
+        } else if (pid == 0) {
+            std::vector<char*> argv;
+            for (auto& arg : cmd)
+                argv.push_back(&arg[0]);
+            argv.push_back(nullptr); 
+
+            execvp(argv[0], argv.data());
+
+            // If child fails then exit with error.
+            // could use some better error handling here.
+            exit(-1); 
+        } else {
+            int status;
+            wait(&status); // Wait for child to finish
+        }
+
+        return 0;
     }
 }

@@ -1,6 +1,9 @@
 #ifndef EXECUTE_HPP
 #define EXECUTE_HPP
 
+#include <sys/stat.h>
+#include <sys/wait.h>
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -22,21 +25,19 @@ namespace brsh_lib {
 
     class Executor {
         private:
-            std::vector<std::string> paths;
             static constexpr std::array<std::string_view, 3> builtins = {"cd", "exit", "brsh"};
 
-            int execute_builtin(std::vector<std::string> args);
-            int is_builtin(std::string command);
+            int execute_builtin(std::vector<std::string>& args);
+            int is_builtin(std::string& command);
             std::string get_current_working_directory();
-            int execute_builtin_cd(std::vector<std::string> args);
+            int execute_builtin_cd(std::vector<std::string>& args);
             int execute_builtin_exit();
             int execute_builtin_brsh();
 
-            int execute_external(std::vector<std::string> args);
+            int execute_external(std::vector<std::string>& args);
 
         public:
-            Executor();
-            int execute_command(std::vector<std::string> command, int in, int out);
+            int execute_command(std::vector<std::string>& command, int in, int out);
     };
 }
 
