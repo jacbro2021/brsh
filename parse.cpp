@@ -5,8 +5,12 @@ namespace brsh_lib {
         return infile;
     }
 
-    std::string Parser::get_outfile() {
-        return outfile;
+    std::string Parser::get_append_outfile() {
+        return append_outfile;
+    }
+
+    std::string Parser::get_overwrite_outfile() {
+        return overwrite_outfile;
     }
 
     std::vector<std::vector<std::string>> Parser::get_commands() {
@@ -52,11 +56,19 @@ namespace brsh_lib {
 
         // check if the last command has an output redirection
         if (commands.size() >= 1) {
-            const std::string target = ">";
-            auto it = std::find(commands[commands.size() - 1].begin(), commands[commands.size() - 1].end(), target);
-            if (it != commands[commands.size() - 1].end()) {
-                outfile = *(it + 1);
-                commands[commands.size() - 1].erase(it, commands[commands.size() - 1].end());
+            const std::string append_target = ">>";
+            auto append_it = std::find(commands[commands.size() - 1].begin(), commands[commands.size() - 1].end(), append_target);
+            if (append_it != commands[commands.size() - 1].end()) {
+                append_outfile = *(append_it + 1);
+                commands[commands.size() - 1].erase(append_it, commands[commands.size() - 1].end());
+                return;
+            } 
+
+            const std::string overwrite_target = ">";
+            auto overwrite_it = std::find(commands[commands.size() - 1].begin(), commands[commands.size() - 1].end(), overwrite_target);
+            if (overwrite_it != commands[commands.size() - 1].end()) {
+                overwrite_outfile = *(overwrite_it + 1);
+                commands[commands.size() - 1].erase(overwrite_it, commands[commands.size() - 1].end());
             } 
         }
     }
@@ -65,7 +77,7 @@ namespace brsh_lib {
         size_t first = str.find_first_not_of(" \t");
         size_t last = str.find_last_not_of(" \t");
 
-        if (first == std::string::npos) return ""; // Entire string is whitespace
+        if (first == std::string::npos) return ""; 
         return str.substr(first, last - first + 1);
     }
 

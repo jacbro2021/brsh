@@ -7,10 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <cstdlib>
 #include <unistd.h>
-#include <cerrno>
-#include <limits.h>
 #include <stdexcept>
 #include <sstream>
 
@@ -34,7 +31,7 @@ namespace brsh_lib {
             int execute_builtin_exit();
             int execute_builtin_brsh();
 
-            int execute_external(std::vector<std::string>& args);
+            int execute_external(std::vector<std::string>& args, int in, int out);
 
         public:
             int execute_command(std::vector<std::string>& command, int in, int out);

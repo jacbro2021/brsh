@@ -2,15 +2,12 @@
 
 namespace brsh_lib {
     int Executor::execute_command(std::vector<std::string>& command, int in, int out) {
-        (void) in;
-        (void) out;
-        // std::cout << get_bin_path(command[0]) << std::endl;
         if (command.empty()) {
             return 0;
         }
 
         if (is_builtin(command[0]) == ExecutorErrorType::BUILTIN_NOT_FOUND) {
-            return execute_external(command);
+            return execute_external(command, in, out);
         }
 
         return execute_builtin(command);
@@ -96,7 +93,7 @@ namespace brsh_lib {
         }
     }
 
-    int Executor::execute_external(std::vector<std::string>& cmd) {
+    int Executor::execute_external(std::vector<std::string>& cmd, int in, int out) {
         if (cmd.empty()) { 
             return 0;
         }
@@ -106,6 +103,9 @@ namespace brsh_lib {
             // Should add better error handling here.
             return -1;
         } else if (pid == 0) {
+            dup2(in, 0);
+            dup2(out, 1);
+
             std::vector<char*> argv;
             for (auto& arg : cmd)
                 argv.push_back(&arg[0]);

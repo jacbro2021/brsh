@@ -11,7 +11,8 @@ namespace brsh_lib {
     class Parser {
         private:
             std::string infile;
-            std::string outfile;
+            std::string append_outfile;
+            std::string overwrite_outfile;
             std::vector<std::vector<std::string>> commands;
 
             std::string read_one_line();
@@ -20,7 +21,8 @@ namespace brsh_lib {
 
         public:
             std::string get_infile();
-            std::string get_outfile();
+            std::string get_append_outfile();
+            std::string get_overwrite_outfile();
             std::vector<std::vector<std::string>> get_commands();
 
             void parse_next_line(); 
