@@ -1,31 +1,35 @@
-# Compiler and flags
 CXX := clang++
-CXXFLAGS := -Wall -Wextra -std=c++17 -g
+CXXFLAGS := -Wall -Wextra -std=c++17 -Iinclude
 
-# Target executable
 TARGET := brsh
 
-# Source files (add more as needed)
-SRCS := brsh.cpp parse.cpp execute.cpp pipeline.cpp
+SRC_DIR := src
+BUILD_DIR := build
 
-# Object files (derived from source files)
-OBJS := $(SRCS:.cpp=.o)
+SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 
-# Default rule to build the executable
+OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(BUILD_DIR)/$(TARGET) $(OBJS)
 
-# Rule to compile .cpp files into .o files
-%.o: %.cpp
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Run the shell
 .PHONY: run
 run: $(TARGET)
 	clear
-	./$(TARGET)
+	./$(BUILD_DIR)/$(TARGET)
 
-# Clean build artifacts
+.PHONY: debug
+debug: CXXFLAGS += -g
+debug: $(TARGET)
+	clear
+	lldb ./$(BUILD_DIR)/$(TARGET)
+
 .PHONY: clean
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -rf $(BUILD_DIR)
