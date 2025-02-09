@@ -3,11 +3,11 @@
 
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <vector>
 #include <string>
-#include <unistd.h>
 #include <stdexcept>
 #include <sstream>
 
@@ -29,12 +29,12 @@ namespace brsh_lib {
             std::string get_current_working_directory();
             int execute_builtin_cd(std::vector<std::string>& args);
             int execute_builtin_exit();
-            int execute_builtin_brsh();
 
             int execute_external(std::vector<std::string>& args, int in, int out);
 
         public:
             int execute_command(std::vector<std::string>& command, int in, int out);
+            int execute_builtin_brsh();
     };
 }
 

@@ -1,16 +1,16 @@
 #include "execute.hpp"
 
 namespace brsh_lib {
-    int Executor::execute_command(std::vector<std::string>& command, int in, int out) {
-        if (command.empty()) {
+    int Executor::execute_command(std::vector<std::string>& cmd, int in, int out) {
+        if (cmd.empty()) {
             return 0;
         }
 
-        if (is_builtin(command[0]) == ExecutorErrorType::BUILTIN_NOT_FOUND) {
-            return execute_external(command, in, out);
+        if (is_builtin(cmd[0]) == ExecutorErrorType::BUILTIN_NOT_FOUND) {
+            return execute_external(cmd, in, out);
         }
 
-        return execute_builtin(command);
+        return execute_builtin(cmd);
     }
 
     int Executor::execute_builtin(std::vector<std::string>& args) {
@@ -98,13 +98,23 @@ namespace brsh_lib {
             return 0;
         }
 
+        std::array<int, 2> parent_to_child;
+        std::array<int, 2> child_to_parent;
+        pipe(parent_to_child.data());
+        pipe(child_to_parent.data());
+        dup2(in, parent_to_child[0]);
+        dup2(out, child_to_parent[1]);
+
         pid_t pid = fork();
         if (pid == -1) {
             // Should add better error handling here.
             return -1;
         } else if (pid == 0) {
-            dup2(in, 0);
-            dup2(out, 1);
+            close(parent_to_child[1]);
+            dup2(parent_to_child[0], 0);
+
+            close(child_to_parent[0]);
+            dup2(child_to_parent[1], 1);
 
             std::vector<char*> argv;
             for (auto& arg : cmd)
@@ -117,6 +127,9 @@ namespace brsh_lib {
             // could use some better error handling here.
             exit(-1); 
         } else {
+            close(parent_to_child[0]);
+            close(child_to_parent[1]);
+
             int status;
             wait(&status); // Wait for child to finish
         }

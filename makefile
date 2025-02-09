@@ -1,12 +1,12 @@
 # Compiler and flags
-CXX := g++
+CXX := clang++
 CXXFLAGS := -Wall -Wextra -std=c++17 -g
 
 # Target executable
 TARGET := brsh
 
 # Source files (add more as needed)
-SRCS := brsh.cpp parse.cpp execute.cpp
+SRCS := brsh.cpp parse.cpp execute.cpp pipeline.cpp
 
 # Object files (derived from source files)
 OBJS := $(SRCS:.cpp=.o)
