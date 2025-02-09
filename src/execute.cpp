@@ -69,17 +69,9 @@ namespace brsh_lib {
     }
 
     int Executor::execute_builtin_brsh() {
-       std::cout << R"(
- __                       __      
-[  |                     [  |     
- | |.--.   _ .--.  .--.   | |--.  
- | '/'`\ \[ `/'`\]( (`\]  | .-. | 
- |  \__/ | | |     `'.'.  | | | | 
-[__;.__.' [___]   [\__) )[___]|__]
-       )" << std::endl;
+       std::cout << config::ascii << std::endl;
        std::cout << "brsh v" << config::version << std::endl;
        std::cout << "author(s): " << config::author << std::endl << std::endl;
-
        return 0;
     }
 
