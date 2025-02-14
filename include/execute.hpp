@@ -44,8 +44,10 @@ namespace brsh_lib {
             Executor(brsh_lib::HistoryTracker* _tracker) : tracker(_tracker) {}
             int execute_command(std::vector<std::string>& command, int in, int out);
             int execute_builtin_brsh();
+
             std::string get_queued_cmd();
             void reset_queued_cmd();
+
             bool is_executing_r();
             void reset_is_executing_r();
     };

@@ -32,8 +32,8 @@ stdout of last command is either 1 or output redirect
 namespace brsh_lib {
     class Pipeline {
         private:
-            int in_fd;              // line start stdin
-            int out_fd;             // line end stdout
+            int in_fd;              
+            int out_fd;             
 
             std::array<int, 2> in_pipe;
             std::array<int, 2> out_pipe;

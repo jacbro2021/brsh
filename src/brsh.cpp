@@ -12,6 +12,7 @@
 #include "history.hpp"
 
 int main() {
+    constexpr int outfile_mode = S_IRWXU | S_IRWXG | S_IRWXO;
     brsh_lib::HistoryTracker* tracker = new brsh_lib::HistoryTracker(HISTORY_LENGTH);
     brsh_lib::Executor executor = brsh_lib::Executor(tracker);
     executor.execute_builtin_brsh();
@@ -40,13 +41,12 @@ int main() {
                 in = redirect_in;
         }
 
-        const int mode = S_IRWXU | S_IRWXG | S_IRWXO;
         if (!parser.get_append_outfile().empty())  {
-            int redirect_append_out = open(parser.get_append_outfile().c_str(), O_WRONLY | O_CREAT | O_APPEND, mode);
+            int redirect_append_out = open(parser.get_append_outfile().c_str(), O_WRONLY | O_CREAT | O_APPEND, outfile_mode);
             if (redirect_append_out != -1)
                 out = redirect_append_out;
         } else if (!parser.get_overwrite_outfile().empty()) {
-            int redirect_overwrite_out = open(parser.get_overwrite_outfile().c_str(), O_WRONLY | O_CREAT | O_TRUNC, mode);
+            int redirect_overwrite_out = open(parser.get_overwrite_outfile().c_str(), O_WRONLY | O_CREAT | O_TRUNC, outfile_mode);
             if (redirect_overwrite_out != -1)
                 out = redirect_overwrite_out;
         }
