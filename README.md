@@ -1,7 +1,6 @@
 # brsh
 
-brsh is a small, bash-like, shell built from scratch in c++. The shell has the ability to execute all of the normal external programs that a shell should be able to execute, as well as a short list of builtin 
-commands. 
+brsh is a small, bash-like, shell built from scratch in c++. The shell has the ability to execute all of the normal external programs that a shell should be able to execute, support for pipes, IO redirection, and a short list of builtin commands. 
 
 The builtin commands are as follows:
 
