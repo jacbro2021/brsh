@@ -10,8 +10,10 @@
 #include <string>
 #include <stdexcept>
 #include <sstream>
+#include <deque>
 
 #include "config.hpp"
+#include "history.hpp"
 
 namespace brsh_lib {
     enum ExecutorErrorType {
@@ -22,17 +24,21 @@ namespace brsh_lib {
 
     class Executor {
         private:
-            static constexpr std::array<std::string_view, 3> builtins = {"cd", "exit", "brsh"};
+            static constexpr std::array<std::string_view, 5> builtins = {"cd", "exit", "brsh", "history", "r"};
+            brsh_lib::HistoryTracker* tracker;
 
             int execute_builtin(std::vector<std::string>& args);
             int is_builtin(std::string& command);
             std::string get_current_working_directory();
             int execute_builtin_cd(std::vector<std::string>& args);
             int execute_builtin_exit();
+            int execute_builtin_history();
+            int execute_builtin_r(std::vector<std::string>& args);
 
             int execute_external(std::vector<std::string>& args, int in, int out);
 
         public:
+            Executor(brsh_lib::HistoryTracker* _tracker) : tracker(_tracker) {}
             int execute_command(std::vector<std::string>& command, int in, int out);
             int execute_builtin_brsh();
     };

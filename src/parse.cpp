@@ -24,6 +24,7 @@ namespace brsh_lib {
     std::string Parser::read_one_line() {
         std::string line;
         std::getline(std::cin, line);
+        raw_line = line;
         return line;
     }
 
@@ -89,5 +90,9 @@ namespace brsh_lib {
             }
             std::cout << "]" << std::endl;
         }
+    }
+
+    std::string Parser::get_raw_line() {
+        return raw_line;
     }
 }

@@ -14,6 +14,7 @@ namespace brsh_lib {
             std::string append_outfile;
             std::string overwrite_outfile;
             std::vector<std::vector<std::string>> commands;
+            std::string raw_line;
 
             std::string read_one_line();
             std::string trim(const std::string& str);
@@ -24,6 +25,7 @@ namespace brsh_lib {
             std::string get_append_outfile();
             std::string get_overwrite_outfile();
             std::vector<std::vector<std::string>> get_commands();
+            std::string get_raw_line();
 
             void parse_next_line(); 
 

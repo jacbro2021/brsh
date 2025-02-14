@@ -9,9 +9,11 @@
 #include "parse.hpp"
 #include "execute.hpp"
 #include "pipeline.hpp"
+#include "history.hpp"
 
 int main() {
-    brsh_lib::Executor executor;
+    brsh_lib::HistoryTracker* tracker = new brsh_lib::HistoryTracker(HISTORY_LENGTH);
+    brsh_lib::Executor executor = brsh_lib::Executor(tracker);
     executor.execute_builtin_brsh();
 
     while (true) {
@@ -21,6 +23,7 @@ int main() {
         std::cout << config::prompt;
         brsh_lib::Parser parser;
         parser.parse_next_line(); 
+        tracker->queue_command(parser.get_raw_line());
 
         std::vector<std::vector<std::string>> cmds = parser.get_commands();
         if (cmds.empty()) 
@@ -54,8 +57,11 @@ int main() {
             executor.execute_command(cmd, cur_in, cur_out);
             pipeline.transition_pipes(first);
         } 
-    }
 
+        tracker->commit_queued_command();
+    } // while(true)
+
+    delete tracker;
     return 0;
 }
 

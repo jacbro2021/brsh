@@ -28,6 +28,10 @@ namespace brsh_lib {
                 return execute_builtin_exit();
             case 2:
                 return execute_builtin_brsh();
+            case 3:
+                return execute_builtin_history();
+            case 4:
+                return execute_builtin_r(args);
             default:
                 break;
         }
@@ -36,9 +40,9 @@ namespace brsh_lib {
     }
 
     int Executor::is_builtin(std::string& command) {
-        for (int i = 0; i < 3; i++) {
+        for (size_t i = 0; i < builtins.size(); i++) {
             if (command == builtins[i]) {
-                return i;
+                return (int)i;
             }
         }
 
@@ -73,6 +77,19 @@ namespace brsh_lib {
        std::cout << "brsh v" << config::version << std::endl;
        std::cout << "author(s): " << config::author << std::endl << std::endl;
        return 0;
+    }
+
+    int Executor::execute_builtin_history() {
+        for (auto cmd : tracker->get_history()) {
+            std::cout << cmd << std::endl;
+        } 
+
+        return 0;
+    }
+
+    int Executor::execute_builtin_r(std::vector<std::string>& args) {
+        (void) args; // DELETE ME
+        return 0;
     }
 
     std::string Executor::get_current_working_directory() {
