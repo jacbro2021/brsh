@@ -17,7 +17,7 @@ namespace brsh_lib {
 
         public:
             HistoryTracker(size_t maxSize) : maxSize(maxSize) {}
-            std::string get_prev_cmd(size_t ind = 0);
+            std::string get_prev_cmd(size_t ind);
             std::deque<std::string> get_history();
 
             void queue_command(std::string cmd);

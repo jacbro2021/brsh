@@ -5,9 +5,9 @@ namespace brsh_lib {
         if (ind == 0) {
             return stack.back();
         } else if (ind >= stack.size()) {
-           throw std::runtime_error("invalid lookback index");
+            return "";
         } else {
-            return stack[stack.size() - 1 - ind];
+            return stack[stack.size() - ind];
         }
     }
 
@@ -20,7 +20,7 @@ namespace brsh_lib {
     }
 
     void HistoryTracker::commit_queued_command() {
-        if (queued_command == "") {
+        if (queued_command == "" || (stack.size() > 0 && stack.back() == queued_command)) {
             return;
         }
 

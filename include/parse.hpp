@@ -18,7 +18,6 @@ namespace brsh_lib {
 
             std::string read_one_line();
             std::string trim(const std::string& str);
-            void tokenize_line(std::string line); 
 
         public:
             std::string get_infile();
@@ -26,6 +25,7 @@ namespace brsh_lib {
             std::string get_overwrite_outfile();
             std::vector<std::vector<std::string>> get_commands();
             std::string get_raw_line();
+            void tokenize_line(std::string line); 
 
             void parse_next_line(); 
 

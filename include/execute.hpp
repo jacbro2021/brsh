@@ -20,12 +20,15 @@ namespace brsh_lib {
         INVALID_COMMAND = -256,
         BUILTIN_NOT_FOUND = -257, 
         CD_EXTRA_ARGUMENTS = -258,
+        R_INCORRECT_ARGUMENTS = -259,
     };
 
     class Executor {
         private:
             static constexpr std::array<std::string_view, 5> builtins = {"cd", "exit", "brsh", "history", "r"};
             brsh_lib::HistoryTracker* tracker;
+            std::string queued_cmd = "";
+            bool executing_r_flag = false;
 
             int execute_builtin(std::vector<std::string>& args);
             int is_builtin(std::string& command);
@@ -41,6 +44,10 @@ namespace brsh_lib {
             Executor(brsh_lib::HistoryTracker* _tracker) : tracker(_tracker) {}
             int execute_command(std::vector<std::string>& command, int in, int out);
             int execute_builtin_brsh();
+            std::string get_queued_cmd();
+            void reset_queued_cmd();
+            bool is_executing_r();
+            void reset_is_executing_r();
     };
 }
 

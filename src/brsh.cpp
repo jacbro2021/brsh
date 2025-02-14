@@ -19,11 +19,16 @@ int main() {
     while (true) {
         int in = 0;
         int out = 1;
-
-        std::cout << config::prompt;
         brsh_lib::Parser parser;
-        parser.parse_next_line(); 
-        tracker->queue_command(parser.get_raw_line());
+
+        std::string queued_cmd;
+        if ((queued_cmd = executor.get_queued_cmd()).empty()) {
+            std::cout << config::red << config::prompt << config::reset;
+            parser.parse_next_line(); 
+            tracker->queue_command(parser.get_raw_line());
+        } else {
+            parser.tokenize_line(queued_cmd);
+        }
 
         std::vector<std::vector<std::string>> cmds = parser.get_commands();
         if (cmds.empty()) 
@@ -58,7 +63,13 @@ int main() {
             pipeline.transition_pipes(first);
         } 
 
-        tracker->commit_queued_command();
+        if (!queued_cmd.empty()) {
+            executor.reset_queued_cmd();
+        } else if (!executor.is_executing_r()) {
+            tracker->commit_queued_command();
+        } else {
+            executor.reset_is_executing_r();
+        }
     } // while(true)
 
     delete tracker;

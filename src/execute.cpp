@@ -80,8 +80,12 @@ namespace brsh_lib {
     }
 
     int Executor::execute_builtin_history() {
+        tracker->commit_queued_command();
+        int size = tracker->get_history().size();
+        int offset = 0;
+
         for (auto cmd : tracker->get_history()) {
-            std::cout << cmd << std::endl;
+            std::cout << size - (offset++) << " " << cmd << std::endl;
         } 
 
         return 0;
@@ -89,6 +93,28 @@ namespace brsh_lib {
 
     int Executor::execute_builtin_r(std::vector<std::string>& args) {
         (void) args; // DELETE ME
+        int ind;
+        executing_r_flag = true;
+
+        if (args.size() > 2) {
+            return R_INCORRECT_ARGUMENTS;
+        }
+        
+        if (args.size() == 2) {
+            try {
+                ind = std::stoi(args[1]);
+            } catch (const std::invalid_argument& e) {
+                std::cerr << "Invalid argument: " << e.what() << std::endl;
+                return R_INCORRECT_ARGUMENTS;
+            } catch (const std::out_of_range& e) {
+                std::cerr << "Out of range: " << e.what() << std::endl;
+                return R_INCORRECT_ARGUMENTS;
+            }
+        } else {
+            ind = 1;
+        }
+
+        queued_cmd = tracker->get_prev_cmd(ind);
         return 0;
     }
 
@@ -144,5 +170,21 @@ namespace brsh_lib {
         }
 
         return 0;
+    }
+
+    std::string Executor::get_queued_cmd() {
+        return queued_cmd;
+    }
+
+    void Executor::reset_queued_cmd() {
+        queued_cmd = "";
+    }
+
+    bool Executor::is_executing_r() {
+        return executing_r_flag;
+    }
+
+    void Executor::reset_is_executing_r() {
+        executing_r_flag = false;
     }
 }
